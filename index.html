@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Calm Breath</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #B9CBD9;
+        }
+
+        #canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden
+        }
+    </style>
+    <script type="text/javascript">
+        function showAxes(ctx, axes) {
+            var width = ctx.canvas.width;
+            var height = ctx.canvas.height;
+            var xMin = 0;
+
+            ctx.beginPath();
+            ctx.strokeStyle = "rgb(215, 226, 232)";
+
+            // X-Axis
+            // ctx.moveTo(xMin, height / 2);
+            // ctx.lineTo(width, height / 2);
+
+            // Y-Axis
+            ctx.moveTo(width / 2, yBuffer);
+            ctx.lineTo(width / 2, height - yBuffer);
+
+            // Starting line
+            // ctx.moveTo(0, 0);
+            // ctx.lineTo(0, height);
+
+            ctx.stroke();
+        }
+        function drawPoint(ctx, y) {
+            var radius = 18;
+            ctx.beginPath();
+
+            // Hold x constant at 4 so the point only moves up and down.
+            ctx.arc(ctx.canvas.width / 2, y, radius, 0, 2 * Math.PI, false);
+
+            ctx.fillStyle = 'rgb(252, 201, 197)';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgb(252, 201, 197)';
+            ctx.stroke();
+        }
+        function plotSine(ctx, xOffset, yOffset) {
+            var width = ctx.canvas.width;
+            var height = ctx.canvas.height;
+            var scale = 20;
+
+            ctx.beginPath();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "rgb(252, 201, 197)";
+
+            // console.log("Drawing point...");
+            // drawPoint(ctx, yOffset+step);
+
+            var dotY = 0;
+            var firstY = 0;
+            var x = 4;
+            var y = 0;
+            var amplitude = 80;
+            var frequency = 420;
+            //ctx.moveTo(x, y);
+            ctx.moveTo(x, yOffset);
+            while (x < width) {
+                var sine = Math.sin((x + xOffset) / frequency);
+                y = height / 2 + (height / 2 - yBuffer) * sine;
+                ctx.lineTo(x, y);
+                if (x == 4) {
+                    firstY = y;
+                }
+                if (x == Math.round(width / 2)) {
+                    dotY = y;
+                }
+                x++;
+                lastY = 0;
+                // console.log("x="+x+" y="+y);
+            }
+            ctx.stroke();
+            ctx.save();
+
+            // console.log("Drawing point at y=" + y);
+            drawPoint(ctx, dotY);
+            ctx.stroke();
+            ctx.restore();
+            return firstY;
+        }
+
+        function draw() {
+            var canvas = document.getElementById("canvas");
+            canvas.width = document.documentElement.clientWidth;
+            canvas.height = document.documentElement.clientHeight;
+
+            var context = canvas.getContext("2d");
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            showAxes(context);
+            context.save();
+
+            y = plotSine(context, step, y);
+            context.restore();
+
+            step += 4;
+            window.requestAnimationFrame(draw);
+        }
+
+        function init() {
+            window.requestAnimationFrame(draw);
+        }
+        var step = -4;
+        var y = 50;
+
+        // Y axis buffer for spacing
+        var yBuffer = 20;
+    </script>
+</head>
+
+<body onload="init()">
+    <canvas id="canvas"></canvas>
+</body>
+
+</html>
