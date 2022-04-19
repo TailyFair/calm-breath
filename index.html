@@ -43,6 +43,7 @@
 
             ctx.stroke();
         }
+
         function drawPoint(ctx, y) {
             var radius = 18;
             ctx.beginPath();
@@ -56,28 +57,25 @@
             ctx.strokeStyle = 'rgb(252, 201, 197)';
             ctx.stroke();
         }
+
         function plotSine(ctx, xOffset, yOffset) {
             var width = ctx.canvas.width;
             var height = ctx.canvas.height;
-            var scale = 20;
 
             ctx.beginPath();
             ctx.lineWidth = 5;
             ctx.strokeStyle = "rgb(252, 201, 197)";
 
-            // console.log("Drawing point...");
-            // drawPoint(ctx, yOffset+step);
-
             var dotY = 0;
             var firstY = 0;
-            var x = 4;
+            var x = 0;
             var y = 0;
             var amplitude = 80;
             var frequency = 420;
-            //ctx.moveTo(x, y);
+
             ctx.moveTo(x, yOffset);
             while (x < width) {
-                var sine = Math.sin((x + xOffset) / frequency);
+                var sine = Math.sin((x + xOffset / 4.2) / frequency);
                 y = height / 2 + (height / 2 - yBuffer) * sine;
                 ctx.lineTo(x, y);
                 if (x == 4) {
@@ -88,19 +86,18 @@
                 }
                 x++;
                 lastY = 0;
-                // console.log("x="+x+" y="+y);
             }
+
             ctx.stroke();
             ctx.save();
 
-            // console.log("Drawing point at y=" + y);
             drawPoint(ctx, dotY);
             ctx.stroke();
             ctx.restore();
             return firstY;
         }
 
-        function draw() {
+        function draw(timestamp) {
             var canvas = document.getElementById("canvas");
             canvas.width = document.documentElement.clientWidth;
             canvas.height = document.documentElement.clientHeight;
@@ -111,17 +108,16 @@
             showAxes(context);
             context.save();
 
-            y = plotSine(context, step, y);
+            y = plotSine(context, timestamp, y);
             context.restore();
 
-            step += 4;
             window.requestAnimationFrame(draw);
         }
 
         function init() {
             window.requestAnimationFrame(draw);
         }
-        var step = -4;
+
         var y = 50;
 
         // Y axis buffer for spacing
